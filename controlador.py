@@ -25,14 +25,14 @@ def handle(conn_addr):
     time.sleep(2)
 
   vControle = 1
-  con.send("Ok, sua vez...\n)
+  con.send("Ok, sua vez...\n".encode())
   con.send("INI".encode())                      #Envia ao cliente INI (inicio da comunicacao)
   while True:                                   #Laço que serve para receber o comando do cliente
     msg = con.recv(1024).decode()
     if (msg.startswith("fim")):                 #Cliente sinaliza que deseja finalizar 
       break    
     print (msg + "\n")
-  con.send("EOT\n".encode())                    #Envia ao cliente EOT (fim da comunicacao)
+  con.send("EOT".encode())                    #Envia ao cliente EOT (fim da comunicacao)
   con.close()
   vControle = 0
 
