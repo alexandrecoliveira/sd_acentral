@@ -1,51 +1,26 @@
 import socket
-import threading
-import time
 
 HOST    = ''     
-PORT    = int(input("Digite uma porta: "))
+PORT    = 5002     
 s       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
 orig    = (HOST, PORT)
 s.bind(orig)
 s.listen(2)
 
-global x                                        #variavel compartilhada
-global vControle                                #variavel de controle
+global x
 
-def passagemLivre():
-  global vControle
-  return (vControle == 0)  
-
-def handle(conn_addr):
-  global x, vControle                           #explicitamente informa que a variavel global sera usada
-  con, cliente = conn_addr  
-  print ("\nConectado por .: ", cliente)
-  con.send("Conectado ...\n".encode())  
-  while not passagemLivre(): 
-    con.send("Aguarde a liberacao ...\n".encode())
-    time.sleep(2)
-    
-  vControle = 1
-  con.send("Ok, sua vez...\nINI\n".encode())    #Envia ao cliente INI (inicio da comunicacao)
-  while True:                                   #Laço que serve para receber o comando do cliente
-    msg = con.recv(1024).decode()
-    if (msg.startswith("fim")):                 #Cliente sinaliza que deseja finalizar 
-      break    
-    [comando, numero] = msg.split(";")
-    if (comando == "ler"):
-      print (msg + "\n")
-      msg = str(x)
-      con.send(msg.encode())                    #Informa o valor atual de "x"
-    elif (comando == "escrever"):
-        print (msg + "\n")
-        x = int(numero)
-        #msg = numero           
-  con.send("EOT\n".encode())                    #Envia ao cliente EOT (fim da comunicacao)
-  con.close()
-  vControle = 0
-
-#main do programa
-vControle = 0
-x         = 0
+x = 0
 while True:
-  threading.Thread(target=handle, args=(s.accept(),)).start()
+  con, cliente = s.accept()
+  print ("\nConectado por .: ", cliente)
+  msg = con.recv(1024).decode()
+  [comando, numero] = msg.split(";")
+  if (comando == "ler"):
+    print (msg + "\n")
+    msg = str(x)
+    con.send(msg.encode())
+  else:
+    if (comando == "escrever"):
+      print (msg + "\n")
+      x = int(numero)
+  con.close()
