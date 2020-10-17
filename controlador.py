@@ -3,7 +3,7 @@ import threading
 import time
 
 HOST    = ''     
-PORT    = int(input("Digite uma porta: "))
+PORT    = 5001 #int(input("Digite uma porta: "))
 s       = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
 orig    = (HOST, PORT)
 s.bind(orig)
@@ -21,18 +21,16 @@ def handle(conn_addr):
   print ("\nConectado por .: ", cliente)
   con.send("Conectado ...\n".encode())  
   while not passagemLivre(): 
-    con.send("Aguarde a liberacao ...\nWAIT".encode())
+    con.send("WAIT".encode())                   #Envia ao cliente WAIT (espera)
     time.sleep(2)
 
   vControle = 1
-  con.send("Ok, sua vez...\n".encode())
   con.send("INI".encode())                      #Envia ao cliente INI (inicio da comunicacao)
   while True:                                   #Laço que serve para receber o comando do cliente
     msg = con.recv(1024).decode()
     if (msg.startswith("fim")):                 #Cliente sinaliza que deseja finalizar 
-      break    
-    print (msg + "\n")
-  con.send("EOT".encode())                    #Envia ao cliente EOT (fim da comunicacao)
+      print ("\n", cliente , " diz: " , msg)
+      break        
   con.close()
   vControle = 0
 
