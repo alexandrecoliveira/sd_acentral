@@ -11,20 +11,19 @@ def ler(dest):
   servidor.close()
   return int(res) 
 
-def escreve(x, dest): 
+def escrever(x, dest): 
   servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   servidor.connect(dest)
   comando = "escrever;" + str(x)
   servidor.send(comando.encode())
   time.sleep(1)
   servidor.close()
-  return True
 
 def realizaOperacao(server_d):
   for i in range(1, random.randint(1,10) * 5):         
       x = ler(server_d)
       x = x + 1
-      escreve(x, server_d)
+      escrever(x, server_d)
       print ("Valor de x: ", x)
       
 def permissaoPassagem(controlador_d, server_d):
